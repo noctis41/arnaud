@@ -1,7 +1,6 @@
-<?php  
-//Ecrivez votre adresse e-mail entre les guillemets  
+								<?php   
 $destinataire='gairaut.arnaud@laposte.net';  
-?><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "[http://www.w3.org/TR/html4/strict.dtd]">  
+?>
 <html lang="fr">  
 <head>  
   <title>Contact</title>  
@@ -24,41 +23,39 @@ $Envoi="\n".'<p class="bt">
 <input name="envoi" tabindex="4" value="Envoyer" type="submit"></p>';  
 if (isset($_POST['message']))  
   {  
-    // La variable $verif va nous permettre d'analyser si la sémantique de l'email est bonne  
+   
     $verif='#^[\w.-]+@[\w.-]+\.[a-zA-Z]{2,5}$#';  
-    //quelques remplacements pour les specialchars  
     $message=preg_replace('#(<|>)#', '-', $_POST['message']);  
     $message=str_replace('"', "'",$message);  
     $message=str_replace('&', 'et',$message);  
     $objet=preg_replace('#(<|>)#', '-', $_POST['objet']);  
     $objet=str_replace('"', "'",$objet);  
     $objet=str_replace('&', 'et',$objet);  
-    // On assigne et/ou protège nos variables  
+   
     $votremail=stripslashes(htmlentities($_POST['votremail']));  
     $message=stripslashes(htmlspecialchars($message));  
     $objet=stripslashes(htmlspecialchars($objet));  
-    //input envoi/previsualiser  
+     
     $envoi=htmlentities($_POST['envoi']);  
     $previsualiser=htmlentities($_POST['previsualiser']);  
-    //on enlève les espaces  
+     
     $votremail=trim($votremail);  
     $message=trim($message);  
     $objet=trim($objet);  
 
     $apercu_resultat='<p>Aperçu du résultat :</p>';  
 
-    /*On vérifie si l'e mail et le message sont pleins, et on agit en fonction.  
-      (on affiche Apercu du resultat, tel ou tel champ est vide, etc...*/  
+    t vide, etc...*/  
     //Si ca ne vas pas (mal rempli, mail non valide...)  
     if((empty($message))or(empty($objet))or(!preg_match($verif,$votremail)))  
       {  
-        //les 3 champs sont vides  
+        
         if(empty($votremail)and(empty($message))and(empty($objet)))  
           {  
             echo '<p>Tous les champs sont vides.</p>';  
             $message='';$gairaut.arnaud@laposte.net='';$objet='';$apercu_resultat='';  
           }  
-        //un des champs est vide  
+         
         else  
           {  
             if(!preg_match($gairaut.arnaud@laposte.net))  
@@ -71,7 +68,7 @@ if (isset($_POST['message']))
             }  
           }  
       }  
-    //Si les deux sont pleins et que l'adresse est valide, on envoie on on prévisualise sans envoi  
+     
     else  
       {  
         $domaine=preg_replace('#[^@]+@(.+)#','$1',$votremail);  
@@ -102,6 +99,24 @@ if (isset($_POST['message']))
       }  
 echo $apercu_resultat;  
   }  
+else  
+  {  
+  echo '<p>Vous pouvez utiliser ce formulaire pour me contacter.</p>';  
+  $votremail='';$message='';  
+  }  
+$bas_formulaire=$Previsualiser.$Envoi;  
+?>  
+<form id='contact' method="post" action="<?php echo $_SERVER['PHP_SELF'];?>" enctype="multipart/form-data">  
+  <p id='obj'><label for='objet'>Objet de votre message :<br>  
+  <input type='text' name='objet' id='objet' tabindex='10' size='30'></label></p>   
+
+  <p id="adr"><label for="mail">Votre Adresse E-mail<br>  
+  <input name="votremail" tabindex="20" size="30" type="text" id="mail" value="<?php echo $votremail; ?>"></label></p>  
+    
+  <p id="msg"><label for="message">Votre message<br>  
+  <textarea tabindex="30" rows="20" cols="120" name="message" id="message"><?php echo $message; ?></textarea>  
+  </label></p>  
+<?php echo $bas_formulaire;?> 
 else  
   {  
   echo '<p>Vous pouvez utiliser ce formulaire pour me contacter.</p>';  
