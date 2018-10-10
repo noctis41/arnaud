@@ -1,80 +1,108 @@
-<<?php
+<?php
 
-if ($_SERVER['REQUEST_METHOD']=='POST') {
-  
-  
-  $nombreErreur = 0; // Variable qui compte le nombre d'erreur
-  
-  // Définit toutes les erreurs possibles
-  if (!isset($_POST['email'])) { // Si la variable "email" du formulaire n'existe pas (il y a un problème)
-    $nombreErreur++; // On incrémente la variable qui compte les erreurs
-    $erreur1 = '<p>Il y a un problème avec la variable "email".</p>';
-  } else { // Sinon, cela signifie que la variable existe (c'est normal)
-    if (empty($_POST['email'])) { // Si la variable est vide
-      $nombreErreur++; // On incrémente la variable qui compte les erreurs
-      $erreur2 = '<p>Vous avez oublié de donner votre email.</p>';
-    } else {
-      if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-        $nombreErreur++; // On incrémente la variable qui compte les erreurs
-        $erreur3 = '<p>Cet email ne ressemble pas un email.</p>';
-      }
-    }
-  }
-  
-  if (!isset($_POST['message'])) {
-    $nombreErreur++;
-    $erreur4 = '<p>Il y a un problème avec la variable "message".</p>';
-  } else {
-    if (empty($_POST['message'])) {
-      $nombreErreur++;
-      $erreur5 = '<p>Vous avez oublié de donner un message.</p>';
-    }
-  }
-  
-  if (!isset($_POST['captcha'])) {
-    $nombreErreur++;
-    $erreur6 = '<p>Il y a un problème avec la variable "captcha".</p>';
-  } else {
-    if ($_POST['captcha']!=4) {
-      $nombreErreur++;
-      $erreur7 = '<p>Désolé, le captcha anti-spam est erroné.</p>';
-    }
-  }
-  
-  if ($nombreErreur==0) { // S'il n'y a pas d'erreur
-    // Récupération des variables et sécurisation des données
-    $nom = htmlentities($_POST['nom']); // htmlentities() convertit des caractères "spéciaux" en équivalent HTML
-    $email = htmlentities($_POST['email']);
-    $message = htmlentities($_POST['message']);
-    
-    // Variables concernant l'email
-    $destinataire = 'gairaut.arnaud@laposte.net'; // Adresse email du webmaster
-    $sujet = 'Titre du message'; // Titre de l'email
-    $contenu = '<html><head><title>Titre du message</title></head><body>';
-    $contenu .= '<p>Bonjour, vous avez reçu un message à partir de votre site web.</p>';
-    $contenu .= '<p><strong>Nom</strong>: '.$nom.'</p>';
-    $contenu .= '<p><strong>Email</strong>: '.$email.'</p>';
-    $contenu .= '<p><strong>Message</strong>: '.$message.'</p>';
-    $contenu .= '</body></html>'; // Contenu du message de l'email
-    
-    // Pour envoyer un email HTML, l'en-tête Content-type doit être défini
-    $headers = 'MIME-Version: 1.0'."\r\n";
-    $headers .= 'Content-type: text/html; charset=iso-8859-1'."\r\n";
-    
-    @mail($destinataire, $sujet, $contenu, $headers); // Fonction principale qui envoi l'email
-    
-    echo '<h2>Message envoyé!</h2>'; // Afficher un message pour indiquer que le message a été envoyé
-  } else { // S'il y a un moins une erreur
-    echo '<div style="border:1px solid #ff0000; padding:5px;">';
-    echo '<p style="color:#ff0000;">Désolé, il y a eu '.$nombreErreur.' erreur(s). Voici le détail des erreurs:</p>';
-    if (isset($erreur1)) echo '<p>'.$erreur1.'</p>';
-    if (isset($erreur2)) echo '<p>'.$erreur2.'</p>';
-    if (isset($erreur3)) echo '<p>'.$erreur3.'</p>';
-    if (isset($erreur4)) echo '<p>'.$erreur4.'</p>';
-    if (isset($erreur5)) echo '<p>'.$erreur5.'</p>';
-	if (isset($erreur6)) echo '<p>'.$erreur6.'</p>';
-	if (isset($erreur7)) echo '<p>'.$erreur7.'</p>';
-    echo '</div>';
-  }
+
+
+$destinataire = 'gairaut.arnaud@laposte.net';
+ 
+
+$copie = 'oui'; // 'oui' ou 'non'
+ 
+
+$message_envoye = "Votre message nous est bien parvenu !";
+$message_non_envoye = "L'envoi du mail a échoué, veuillez réessayer SVP.";
+ 
+$message_erreur_formulaire = "Vous devez d'abord <a href=\"contact.html\">envoyer le formulaire</a>.";
+$message_formulaire_invalide = "Vérifiez que tous les champs soient bien remplis et que l'email soit sans erreur.";
+ 
+	 
+
+if (!isset($_POST['envoi']))
+{
+	echo '<p>'.$message_erreur_formulaire.'</p>'."\n";
 }
+else
+{
+	
+	function Rec($text)
+	{
+		$text = htmlspecialchars(trim($text), ENT_QUOTES);
+		if (1 === get_magic_quotes_gpc())
+		{
+			$text = stripslashes($text);
+		}
+ 
+		$text = nl2br($text);
+		return $text;
+	};
+ 
+	
+	function IsEmail($email)
+	{
+		$value = preg_match('/^(?:[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+\.)*[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+@(?:(?:(?:[a-zA-Z0-9_](?:[a-zA-Z0-9_\-](?!\.)){0,61}[a-zA-Z0-9_-]?\.)+[a-zA-Z0-9_](?:[a-zA-Z0-9_\-](?!$)){0,61}[a-zA-Z0-9_]?)|(?:\[(?:(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\]))$/', $email);
+		return (($value === 0) || ($value === false)) ? false : true;
+	}
+ 
+	$nom     = (isset($_POST['nom']))     ? Rec($_POST['nom'])     : '';
+	$email   = (isset($_POST['email']))   ? Rec($_POST['email'])   : '';
+	$objet   = (isset($_POST['objet']))   ? Rec($_POST['objet'])   : '';
+	$message = (isset($_POST['message'])) ? Rec($_POST['message']) : '';
+ 
+	
+	$email = (IsEmail($email)) ? $email : ''; // soit l'email est vide si erroné, soit il vaut l'email entré
+ 
+	if (($nom != '') && ($email != '') && ($objet != '') && ($message != ''))
+	{
+		
+		$headers  = 'MIME-Version: 1.0' . "\r\n";
+		$headers .= 'From:'.$nom.' <'.$email.'>' . "\r\n" .
+				'Reply-To:'.$email. "\r\n" .
+				'Content-Type: text/plain; charset="utf-8"; DelSp="Yes"; format=flowed '."\r\n" .
+				'Content-Disposition: inline'. "\r\n" .
+				'Content-Transfer-Encoding: 7bit'." \r\n" .
+				'X-Mailer:PHP/'.phpversion();
+	
+		
+		if ($copie == 'oui')
+		{
+			$cible = $destinataire.';'.$email;
+		}
+		else
+		{
+			$cible = $destinataire;
+		};
+ 
+		
+		$message = str_replace("&#039;","'",$message);
+		$message = str_replace("&#8217;","'",$message);
+		$message = str_replace("&quot;",'"',$message);
+		$message = str_replace('<br>','',$message);
+		$message = str_replace('<br />','',$message);
+		$message = str_replace("&lt;","<",$message);
+		$message = str_replace("&gt;",">",$message);
+		$message = str_replace("&amp;","&",$message);
+ 
+		
+		$num_emails = 0;
+		$tmp = explode(';', $cible);
+		foreach($tmp as $email_destinataire)
+		{
+			if (mail($email_destinataire, $objet, $message, $headers))
+				$num_emails++;
+		}
+ 
+		if ((($copie == 'oui') && ($num_emails == 2)) || (($copie == 'non') && ($num_emails == 1)))
+		{
+			echo '<p>'.$message_envoye.'</p>';
+		}
+		else
+		{
+			echo '<p>'.$message_non_envoye.'</p>';
+		};
+	}
+	else
+	{
+		
+		echo '<p>'.$message_formulaire_invalide.' <a href="contact.html">Retour au formulaire</a></p>'."\n";
+	};
+}; 
 ?>
