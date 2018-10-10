@@ -64,11 +64,11 @@ else
 		
 		if ($copie == 'oui')
 		{
-			$cible = $destinataire.';'.$email;
+			$cible = $destinataire = 'gairaut.arnaud@laposte.net';.$email;
 		}
 		else
 		{
-			$cible = $destinataire;
+			$cible = $destinataire = 'gairaut.arnaud@laposte.net';;
 		};
  
 		
@@ -84,9 +84,9 @@ else
 		
 		$num_emails = 0;
 		$tmp = explode(';', $cible);
-		foreach($tmp as $email_destinataire)
+		foreach($tmp as $destinataire = 'gairaut.arnaud@laposte.net';)
 		{
-			if (mail($email_destinataire, $objet, $message, $headers))
+			if (mail($destinataire = 'gairaut.arnaud@laposte.net';, $objet, $message, $headers))
 				$num_emails++;
 		}
  
