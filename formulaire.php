@@ -1,8 +1,22 @@
 <?php  
-
+//Ecrivez votre adresse e-mail entre les guillemets  
 $destinataire='gairaut.arnaud@laposte.net';  
-?>
-
+?><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "[http://www.w3.org/TR/html4/strict.dtd]">  
+<html lang="fr">  
+<head>  
+  <title>Contact</title>  
+  <style type="text/css">  
+    form#contact{border:2px solid red;width:70%;padding:1em}  
+    p#msg,p#adr,p#obj{border:2px solid green;margin-right:10%;padding:10px}  
+    p#msg textarea{border:2px solid blue;height:30em;width:80%}  
+    p#adr input,p#obj input{border:2px solid blue}  
+    p.bt{text-align:center}  
+    p.bt input{border:1px red solid;width:50%}  
+  </style>  
+  <meta http-equiv="content-type" content="Content-type:text/html;charset=iso-8859-1">  
+</head>  
+<body style="direction: ltr;">  
+<h1>Contact</h1>  
 <?php  
 $Previsualiser='<p class="bt">  
 <input type="submit" name="previsualiser" tabindex="3" value="Prévisualiser"></p>';  
@@ -95,3 +109,14 @@ else
   }  
 $bas_formulaire=$Previsualiser.$Envoi;  
 ?>  
+<form id='contact' method="post" action="<?php echo $_SERVER['PHP_SELF'];?>" enctype="multipart/form-data">  
+  <p id='obj'><label for='objet'>Objet de votre message :<br>  
+  <input type='text' name='objet' id='objet' tabindex='10' size='30'></label></p>   
+
+  <p id="adr"><label for="mail">Votre Adresse E-mail<br>  
+  <input name="votremail" tabindex="20" size="30" type="text" id="mail" value="<?php echo $votremail; ?>"></label></p>  
+    
+  <p id="msg"><label for="message">Votre message<br>  
+  <textarea tabindex="30" rows="20" cols="120" name="message" id="message"><?php echo $message; ?></textarea>  
+  </label></p>  
+<?php echo $bas_formulaire;?> 
