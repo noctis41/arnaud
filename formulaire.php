@@ -5,7 +5,7 @@
 $destinataire = 'gairaut.arnaud@laposte.net';
  
 
-$copie = 'oui'; // 'oui' ou 'non'
+$copie = 'oui'; 'oui' ou 'non'
  
 
 $message_envoye = "Votre message nous est bien parvenu !";
